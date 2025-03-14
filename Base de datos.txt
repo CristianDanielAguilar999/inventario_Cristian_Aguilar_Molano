@@ -1,0 +1,68 @@
+create database if not exists Inventarri; 
+use Inventarri; 
+
+create table usuario(
+IdUsuario int auto_increment not null primary key,
+nombre varchar(50),
+apellido varchar(100),
+edad int,
+dirección varchar(50),
+email varchar(50),
+telefono int,
+contrasena varchar(100),
+rol varchar(50)
+);
+
+create table categoria(
+IdCategoria int auto_increment not null primary key,
+nombreCategoria varchar(50),
+descripción varchar(50),
+codigoCategoria int,
+estado varchar(50));
+
+create table proveedor(
+IdProveedor int auto_increment not null primary key,
+nombre varchar(50),
+dirección varchar(50),
+telefono int,
+ciudad varchar(50),
+email varchar(50));
+
+create table producto(
+IdProducto int auto_increment not null primary key,
+nombreProducto varchar(50),
+valorProducto int,
+descripción varchar(50),
+cantidad int,
+imagen longblob,
+Id_Proveedor int,
+foreign key (Id_Proveedor) references proveedor(IdProveedor),
+Id_Categoria int,
+foreign key (Id_Categoria) references categoria(IdCategoria));
+
+create table venta(
+IdVenta int auto_increment not null primary key,
+fechaVenta varchar(50),
+totalVenta int,
+metodoPago varchar(50),
+Id_Usuario int,
+foreign key (Id_Usuario) references usuario(IdUsuario));
+
+
+create table detalleVenta(
+IdDetalleVenta int auto_increment not null primary key,
+cantidad int,
+Id_Producto int,
+foreign key (Id_Producto) references producto(IdProducto),
+Id_Venta int,
+foreign key (Id_Venta) references venta(IdVenta));
+
+create table inventario(
+IdInventario int auto_increment not null primary key,
+Cantidad varchar(50),
+fechaMovimiento date,
+estado varchar(50),
+Id_Producto int,
+foreign key (Id_Producto) references producto(IdProducto));
+
+drop database Inventarri;

@@ -1,0 +1,75 @@
+#Bod{
+    width: 100%;
+    height: 100%;
+}
+
+.contenedor{
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
+    width: 50%;
+    height: 100%;
+    margin-top: 70px;
+    margin-left: 300px;
+    padding: 59px;
+    border-radius: 8px;
+    box-shadow:0 0 10px rgb(6, 30, 63);
+}
+
+#LoginForm{
+    margin-bottom: 10%;
+}
+
+label{
+    margin-bottom: 2px;
+    font-weight: bold;
+}
+
+input{
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+}
+
+.degradado{
+    background-image: linear-gradient(#f2f2f2, #2d88ff);
+}
+
+#Iniciar{
+    background-color: cornflowerblue;
+    border-color: blue;
+    color: antiquewhite;
+    height: 80px;
+    width: 400px;
+    margin-left: 70px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+#Iniciar:hover {
+    transform: scale(1.1);
+    color: #007bff;
+}
+
+#Iniciar:active {
+    transform: scale(0.9);
+    color: #0069d9;
+}
+
+.cambio-pagina {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.5s ease;
+}
+
+.cambio-pagina.active {
+    transform: translateX(0);
+}
