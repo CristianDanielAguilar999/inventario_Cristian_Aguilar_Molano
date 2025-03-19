@@ -59,50 +59,55 @@ function RegistrarUsuario() {
 let intentosRestantes = 3;
 
 function iniciarSesion() {
-    const nombreUsuario = document.getElementById("nombreUsuario").value;
-    const contrasena = document.getElementById("contrasena").value;
-    const rol = document.getElementById("Rol").value;
-    const boton = document.getElementById("Iniciar");
+  const nombreUsuario = document.getElementById("nombreUsuario").value;
+  const contrasena = document.getElementById("contrasena").value;
+  const rol = document.getElementById("Rol").value;
+  const boton = document.getElementById("Iniciar");
 
-    if (!nombreUsuario || !contrasena || !rol) {
-        alert("Por favor, completa todos los campos.");
-        return;
-    }
+  if (!nombreUsuario || !contrasena || !rol) {
+      alert("Por favor, completa todos los campos.");
+      return;
+  }
 
-    boton.disabled = true; // Evita múltiples clics
+  boton.disabled = true;
 
-    fetch("../php/login.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            nombreUsuario: nombreUsuario,
-            contrasena: contrasena,
-            Rol: rol
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        boton.disabled = false; // Habilita el botón nuevamente
-        if (data.estado === "exito") {
-            // Redirige a la misma página para todos los roles
-            window.location.href = "../htmlyjs/EjercicioInventario.html";
-        } else {
-            intentosRestantes--;
-            if (intentosRestantes === 0) {
-                boton.disabled = true;
-                alert("Cuenta bloqueada por intentos fallidos.");
-            } else {
-                alert(`Intentos restantes: ${intentosRestantes}`);
-            }
-        }
-    })
-    .catch(error => {
-        console.error(error);
-        boton.disabled = false;
-        alert("Error en el servidor. Intente nuevamente.");
-    });
+  fetch("../php/login.php", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+          nombreUsuario: nombreUsuario,
+          contrasena: contrasena,
+          Rol: rol
+      })
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log("Respuesta del servidor:", data);  // Depuración
+
+      boton.disabled = false;
+      if (data.estado === "exito") {
+          sessionStorage.setItem("rolUsuario", data.rol);
+          console.log(sessionStorage.getItem("rolUsuario"));
+
+          console.log("Redirigiendo a EjercicioInventario.html...");
+          window.location.href = "EjercicioInventario.html";  
+      } else {
+          intentosRestantes--;
+          if (intentosRestantes === 0) {
+              boton.disabled = true;
+              alert("Cuenta bloqueada por intentos fallidos.");
+          } else {
+              alert(`Intentos restantes: ${intentosRestantes}`);
+          }
+      }
+  })
+  .catch(error => {
+      console.error("Error en la solicitud:", error);
+      boton.disabled = false;
+      alert("Error en el servidor. Intente nuevamente.");
+  });
 }
 
 
@@ -527,4 +532,20 @@ function cargarProveedores() {
       })
       .catch(error => console.error("Error cargando proveedores:", error));
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("Código de ocultar botones está funcionando");
+
+  const rolUsuario = sessionStorage.getItem("rolUsuario");
+
+  console.log("Rol del usuario:", rolUsuario);  // Para depuración
+
+  if (rolUsuario === "Comprador") {
+      document.querySelectorAll(".crear-boton").forEach(boton => {
+          boton.style.display = "none";  
+      });
+      console.log("Botones de crear ocultados");
+  }
+});
+
 
