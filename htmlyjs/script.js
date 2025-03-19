@@ -59,38 +59,53 @@ function RegistrarUsuario() {
 let intentosRestantes = 3;
 
 function iniciarSesion() {
-  const nombreUsuario = document.getElementById("nombreUsuario").value;
-  const contrasena = document.getElementById("contrasena").value;
+    const nombreUsuario = document.getElementById("nombreUsuario").value;
+    const contrasena = document.getElementById("contrasena").value;
+    const rol = document.getElementById("Rol").value;
+    const boton = document.getElementById("Iniciar");
 
-  fetch("../php/login.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      nombreUsuario: nombreUsuario,
-      contrasena: contrasena
-    })
-  })
-  .then(response => {
-    console.log(response);
-    return response.json();
-  })
-  .then(data => {
-    if (data.estado === "exito") {
-      window.location.href = "../htmlyjs/EjercicioInventario.html";
-    } else {
-      intentosRestantes--;
-      if (intentosRestantes === 0) {
-        document.getElementById("iniciarSesion").disabled = true;
-        alert("Cuenta bloqueada");
-      } else {
-        alert(`Intentos restantes: ${intentosRestantes}`);
-      }
+    if (!nombreUsuario || !contrasena || !rol) {
+        alert("Por favor, completa todos los campos.");
+        return;
     }
-  })
-  .catch(error => console.error(error));
+
+    boton.disabled = true; // Evita múltiples clics
+
+    fetch("../php/login.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            nombreUsuario: nombreUsuario,
+            contrasena: contrasena,
+            Rol: rol
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        boton.disabled = false; // Habilita el botón nuevamente
+        if (data.estado === "exito") {
+            // Redirige a la misma página para todos los roles
+            window.location.href = "../htmlyjs/EjercicioInventario.html";
+        } else {
+            intentosRestantes--;
+            if (intentosRestantes === 0) {
+                boton.disabled = true;
+                alert("Cuenta bloqueada por intentos fallidos.");
+            } else {
+                alert(`Intentos restantes: ${intentosRestantes}`);
+            }
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        boton.disabled = false;
+        alert("Error en el servidor. Intente nuevamente.");
+    });
 }
+
+
 
 function mostrarPerfil() {
   document.getElementById('overlay').style.display = 'block';

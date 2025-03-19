@@ -7,19 +7,24 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 $nombreUsuario = $data['nombreUsuario'] ?? '';
 $contrasena = $data['contrasena'] ?? '';
+$rol = $data['Rol'] ?? '';
 
-if (empty($nombreUsuario) || empty($contrasena)) {
-  echo json_encode(['estado' => 'error', 'mensaje' => 'No se han enviado los datos correctamente.']);
-} else {
-  $stmt = $pdo->prepare('SELECT contrasena FROM usuario WHERE nombre = :nombre');
-  $stmt->bindParam(':nombre', $nombreUsuario);
-  $stmt->execute();
-  $contrasenaAlmacenada = $stmt->fetchColumn();
-
-  if ($contrasenaAlmacenada && password_verify($contrasena, $contrasenaAlmacenada)) {
-    $_SESSION['nombre'] = $nombreUsuario;
-    echo json_encode(['estado' => 'exito']);
-  } else {
-    echo json_encode(['estado' => 'error', 'mensaje' => 'Credenciales incorrectas.']);
-  }
+if (empty($nombreUsuario) || empty($contrasena) || empty($rol)) {
+    echo json_encode(['estado' => 'error', 'mensaje' => 'Faltan datos']);
+    exit;
 }
+
+$stmt = $pdo->prepare('SELECT contrasena, rol FROM usuario WHERE nombre = :nombre AND rol = :rol');
+$stmt->bindParam(':nombre', $nombreUsuario);
+$stmt->bindParam(':rol', $rol);
+$stmt->execute();
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
+    $_SESSION['nombre'] = $nombreUsuario;
+    $_SESSION['rol'] = $usuario['rol'];
+    echo json_encode(['estado' => 'exito', 'rol' => $usuario['rol']]);
+} else {
+    echo json_encode(['estado' => 'error', 'mensaje' => 'Credenciales incorrectas']);
+}
+?>
