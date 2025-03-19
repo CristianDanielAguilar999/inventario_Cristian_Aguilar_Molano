@@ -538,23 +538,11 @@ function cargarProveedores() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  function verificarRol() {
-      let usuarioRol = sessionStorage.getItem("rolUsuario");
+  const rolUsuario = sessionStorage.getItem("rolUsuario");
 
-      if (!usuarioRol) {
-          console.log("Esperando rol...");
-          setTimeout(verificarRol, 500); // Esperar más tiempo para evitar bucles innecesarios
-          return;
-      }
-
-      console.log("Rol detectado:", usuarioRol);
-
-      if (usuarioRol.toLowerCase() === "comprador") {
-          document.querySelectorAll("[data-crear]").forEach((boton) => {
-              boton.style.display = "none"; // Oculta los botones de creación
-          });
-      }
+  if (rolUsuario === "comprador") {
+      document.querySelectorAll("[data-crear]").forEach(boton => {
+          boton.style.display = "none";
+      });
   }
-
-  setTimeout(verificarRol, 1000); // Asegurar que sessionStorage se haya guardado antes de leerlo
 }); 
