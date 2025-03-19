@@ -1,3 +1,9 @@
+fetch('barra.html')
+  .then(response => response.text())
+  .then(html => {
+    document.getElementById('nav-container').innerHTML = html;
+  });
+
 function IniciarLogin() {
     document.getElementById("RegisterFormContainer").style.display = "block";
 }
