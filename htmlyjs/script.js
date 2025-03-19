@@ -59,55 +59,59 @@ function RegistrarUsuario() {
 let intentosRestantes = 3;
 
 function iniciarSesion() {
-  const nombreUsuario = document.getElementById("nombreUsuario").value;
-  const contrasena = document.getElementById("contrasena").value;
-  const rol = document.getElementById("Rol").value;
-  const boton = document.getElementById("Iniciar");
+    const nombreUsuario = document.getElementById("nombreUsuario").value.trim();
+    const contrasena = document.getElementById("contrasena").value.trim();
+    const rol = document.getElementById("Rol").value.trim();
+    const boton = document.getElementById("Iniciar");
 
-  if (!nombreUsuario || !contrasena || !rol) {
-      alert("Por favor, completa todos los campos.");
-      return;
-  }
+    if (!nombreUsuario || !contrasena || !rol) {
+        alert("Por favor, completa todos los campos.");
+        return;
+    }
 
-  boton.disabled = true;
+    boton.disabled = true;
 
-  fetch("../php/login.php", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-          nombreUsuario: nombreUsuario,
-          contrasena: contrasena,
-          Rol: rol
-      })
-  })
-  .then(response => response.json())
-  .then(data => {
-      console.log("Respuesta del servidor:", data);  // Depuración
+    fetch("../php/login.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            nombreUsuario: nombreUsuario,
+            contrasena: contrasena,
+            Rol: rol
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Respuesta del servidor:", data);
 
-      boton.disabled = false;
-      if (data.estado === "exito") {
-          sessionStorage.setItem("rolUsuario", data.rol);
-          console.log(sessionStorage.getItem("rolUsuario"));
+        boton.disabled = false;
+        if (data.estado === "exito") {
+            sessionStorage.setItem("rolUsuario", data.rol.trim().toLowerCase());
 
-          console.log("Redirigiendo a EjercicioInventario.html...");
-          window.location.href = "EjercicioInventario.html";  
-      } else {
-          intentosRestantes--;
-          if (intentosRestantes === 0) {
-              boton.disabled = true;
-              alert("Cuenta bloqueada por intentos fallidos.");
-          } else {
-              alert(`Intentos restantes: ${intentosRestantes}`);
-          }
-      }
-  })
-  .catch(error => {
-      console.error("Error en la solicitud:", error);
-      boton.disabled = false;
-      alert("Error en el servidor. Intente nuevamente.");
-  });
+            console.log("Rol guardado:", sessionStorage.getItem("rolUsuario"));
+
+            // Asegurar que el rol se guarde antes de redirigir
+            setTimeout(() => {
+                console.log("Redirigiendo a EjercicioInventario.html...");
+                window.location.href = "EjercicioInventario.html";
+            }, 800); // Más tiempo para garantizar que el rol se guarde correctamente
+        } else {
+            intentosRestantes--;
+            if (intentosRestantes === 0) {
+                boton.disabled = true;
+                alert("Cuenta bloqueada por intentos fallidos.");
+            } else {
+                alert(`Intentos restantes: ${intentosRestantes}`);
+            }
+        }
+    })
+    .catch(error => {
+        console.error("Error en la solicitud:", error);
+        boton.disabled = false;
+        alert("Error en el servidor. Intente nuevamente.");
+    });
 }
 
 
@@ -534,18 +538,23 @@ function cargarProveedores() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("Código de ocultar botones está funcionando");
+  function verificarRol() {
+      let usuarioRol = sessionStorage.getItem("rolUsuario");
 
-  const rolUsuario = sessionStorage.getItem("rolUsuario");
+      if (!usuarioRol) {
+          console.log("Esperando rol...");
+          setTimeout(verificarRol, 500); // Esperar más tiempo para evitar bucles innecesarios
+          return;
+      }
 
-  console.log("Rol del usuario:", rolUsuario);  // Para depuración
+      console.log("Rol detectado:", usuarioRol);
 
-  if (rolUsuario === "Comprador") {
-      document.querySelectorAll(".crear-boton").forEach(boton => {
-          boton.style.display = "none";  
-      });
-      console.log("Botones de crear ocultados");
+      if (usuarioRol.toLowerCase() === "comprador") {
+          document.querySelectorAll("[data-crear]").forEach((boton) => {
+              boton.style.display = "none"; // Oculta los botones de creación
+          });
+      }
   }
-});
 
-
+  setTimeout(verificarRol, 1000); // Asegurar que sessionStorage se haya guardado antes de leerlo
+}); 
