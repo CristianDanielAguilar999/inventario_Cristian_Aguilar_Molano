@@ -73,9 +73,7 @@ function iniciarSesion() {
 
     fetch("../php/login.php", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             nombreUsuario: nombreUsuario,
             contrasena: contrasena,
@@ -88,15 +86,11 @@ function iniciarSesion() {
 
         boton.disabled = false;
         if (data.estado === "exito") {
-            sessionStorage.setItem("rolUsuario", data.rol.trim().toLowerCase());
+            // Ya no guardamos en sessionStorage porque usamos PHP para la sesión
 
-            console.log("Rol guardado:", sessionStorage.getItem("rolUsuario"));
+            console.log("Redirigiendo a EjercicioInventario.html...");
+            window.location.href = "EjercicioInventario.html";
 
-            // Asegurar que el rol se guarde antes de redirigir
-            setTimeout(() => {
-                console.log("Redirigiendo a EjercicioInventario.html...");
-                window.location.href = "EjercicioInventario.html";
-            }, 800); // Más tiempo para garantizar que el rol se guarde correctamente
         } else {
             intentosRestantes--;
             if (intentosRestantes === 0) {
@@ -538,11 +532,29 @@ function cargarProveedores() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const rolUsuario = sessionStorage.getItem("rolUsuario");
+  fetch("../php/login.php")
+      .then(response => response.json())
+      .then(data => {
+          if (data.rol) {
+              console.log("El usuario tiene el rol:", data.rol);
+              ocultarOpcionesSegunRol(data.rol); // Llamamos a una función para ocultar elementos
+          } else {
+              console.log("No hay usuario en sesión");
+          }
+      })
+      .catch(error => console.error("Error obteniendo el rol:", error));
+});
 
-  if (rolUsuario === "comprador") {
-      document.querySelectorAll("[data-crear]").forEach(boton => {
-          boton.style.display = "none";
-      });
-  }
-}); 
+document.addEventListener("DOMContentLoaded", function () {
+  fetch("login.php") // Llama a login.php para obtener el rol
+      .then(response => response.json())
+      .then(data => {
+          console.log("Rol actual:", data.rol); // Verifica en consola
+          if (data.rol === "Comprador") {
+              document.querySelectorAll(".crear-opcion").forEach(btn => btn.style.display = "none");
+          }
+      })
+      .catch(error => console.error("Error al obtener el rol:", error));
+});
+
+

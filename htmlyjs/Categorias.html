@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,9 +13,8 @@
 <body>
     <div id="overlay" class="overlay"></div>
     <div id="nav-container"></div>
-<br>
-<!-- Banner Principal -->
-<div id="nav-container"></div>
+    <br>
+    <div id="nav-container"></div>
 
     <h1>Categorías</h1>
     <div id="contenedor-categorias" class="contenedor"></div>
@@ -27,11 +29,11 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
-            max-width: 850px; /* Controla el ancho máximo para filas de 4 tarjetas */
-            margin: 0 auto; /* Centra el contenedor */
+            max-width: 850px;
+            margin: 0 auto;
         }
         .card {
-            width: 200px; /* Tamaño fijo para controlar la cantidad por fila */
+            width: 200px;
             background: rgb(255, 255, 255);
             padding: 15px;
             border-radius: 8px;
@@ -39,7 +41,7 @@
             text-align: center;
         }
     </style>
-    </style>
+    
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
