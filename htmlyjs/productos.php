@@ -12,8 +12,7 @@ session_start();
 </head>
 <body>
     <div id="overlay" class="overlay"></div>
-    <div id="nav-container"></div>
-    <br>
+    <?php include 'barra.php'; ?>
     <div class="container mt-5" id="productos">
         <h2 class="mb-3">Lista de Productos</h2>
         <table class="table table-striped">

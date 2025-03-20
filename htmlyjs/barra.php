@@ -1,3 +1,9 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$rol = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -5,42 +11,57 @@
     <link rel="stylesheet" href="../Estilos/style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Barra de Navegación</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div id="overlay" class="overlay"></div>
-    <nav class="navbar bg-primary">
+        <nav class="navbar navbar-expand-lg bg-primary">
         <div class="container-fluid bg-primary" id="menu">
-            <a class="navbar-brand text-light" href="EjercicioInventario.html">Admin Panel</a>
+            <a class="navbar-brand text-light" href="EjercicioInventario.php">Admin Panel</a>
+
+            <!-- Proveedores -->
             <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                     Proveedores
                 </button>
                 <ul class="dropdown-menu">
-                    <li><button class="dropdown-item" data-bs-toggle="modal" onclick="crearProveedor()">Crear Proveedor</button></li>
-                    <li><a class="dropdown-item" href="proveedores.html">Ver Proveedores</a></li>
+                    <?php if ($rol !== 'Comprador'): ?>
+                        <li><button class="dropdown-item" onclick="crearProveedor()">Crear Proveedor</button></li>
+                    <?php endif; ?>
+                    <li><a class="dropdown-item" href="proveedores.php">Ver Proveedores</a></li>
                 </ul>
             </div>
+
+            <!-- Categorías -->
             <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Categorias 
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Categorías
                 </button>
                 <ul class="dropdown-menu">
-                    <li><button class="dropdown-item" data-bs-toggle="modal" onclick="crearCategoria()">Crear Categoria</button></li>
-                    <li><a class="dropdown-item" href="Categorias.html">Ver Categorias</a></li>
+                    <?php if ($rol !== 'Comprador'): ?>
+                        <li><button class="dropdown-item" onclick="crearCategoria()">Crear Categoría</button></li>
+                    <?php endif; ?>
+                    <li><a class="dropdown-item" href="categorias.php">Ver Categorías</a></li>
                 </ul>
             </div>
+
+            <!-- Productos -->
             <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                     Productos
                 </button>
                 <ul class="dropdown-menu">
-                    <li><button class="dropdown-item" data-bs-toggle="modal" onclick="crearProducto()">Crear Producto</button></li>
-                    <li><a class="dropdown-item" href="productos.html">Lista de Productos</a></li>
+                    <?php if ($rol !== 'Comprador'): ?>
+                        <li><button class="dropdown-item" onclick="crearProducto()">Crear Producto</button></li>
+                    <?php endif; ?>
+                    <li><a class="dropdown-item" href="productos.php">Lista de Productos</a></li>
                 </ul>
             </div>
+
             <button type="button" id="ver-perfil" class="btn btn-primary bg-white text-dark ms-auto" style="width: 10%;" onclick="mostrarPerfil()">Ver Perfil</button>
+
+        </div>           
         </div>
         <div id="perfil" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); z-index: 2;">
             <button type="button" id="cerrar-perfil" class="btn btn-close" onclick="cerrarPerfil()"></button>
@@ -162,9 +183,11 @@
               <button type="button" id="guardar-producto" class="btn btn-primary" onclick="enviarProducto()">Guardar</button>
             </form>
           </div> 
-    </nav>
-    <script src="script.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
+    </nav>     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+
+
 </body>
 </html>

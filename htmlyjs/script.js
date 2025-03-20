@@ -87,7 +87,7 @@ function iniciarSesion() {
         boton.disabled = false; // Habilita el botón nuevamente
         if (data.estado === "exito") {
             // Redirige a la misma página para todos los roles
-            window.location.href = "../htmlyjs/EjercicioInventario.html";
+            window.location.href = "../htmlyjs/EjercicioInventario.php";
         } else {
             intentosRestantes--;
             if (intentosRestantes === 0) {

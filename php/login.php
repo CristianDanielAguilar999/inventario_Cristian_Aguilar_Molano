@@ -22,7 +22,8 @@ $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
     $_SESSION['nombre'] = $nombreUsuario;
-    $_SESSION['rol'] = $usuario['rol'];
+    $_SESSION['rol'] = $usuario['rol'];  // Guardamos el rol en la sesión
+
     echo json_encode(['estado' => 'exito', 'rol' => $usuario['rol']]);
 } else {
     echo json_encode(['estado' => 'error', 'mensaje' => 'Credenciales incorrectas']);
