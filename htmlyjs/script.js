@@ -59,9 +59,9 @@ function RegistrarUsuario() {
 let intentosRestantes = 3;
 
 function iniciarSesion() {
-    const nombreUsuario = document.getElementById("nombreUsuario").value.trim();
-    const contrasena = document.getElementById("contrasena").value.trim();
-    const rol = document.getElementById("Rol").value.trim();
+    const nombreUsuario = document.getElementById("nombreUsuario").value;
+    const contrasena = document.getElementById("contrasena").value;
+    const rol = document.getElementById("Rol").value;
     const boton = document.getElementById("Iniciar");
 
     if (!nombreUsuario || !contrasena || !rol) {
@@ -69,11 +69,13 @@ function iniciarSesion() {
         return;
     }
 
-    boton.disabled = true;
+    boton.disabled = true; // Evita múltiples clics
 
     fetch("../php/login.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify({
             nombreUsuario: nombreUsuario,
             contrasena: contrasena,
@@ -82,15 +84,10 @@ function iniciarSesion() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log("Respuesta del servidor:", data);
-
-        boton.disabled = false;
+        boton.disabled = false; // Habilita el botón nuevamente
         if (data.estado === "exito") {
-            // Ya no guardamos en sessionStorage porque usamos PHP para la sesión
-
-            console.log("Redirigiendo a EjercicioInventario.html...");
-            window.location.href = "EjercicioInventario.html";
-
+            // Redirige a la misma página para todos los roles
+            window.location.href = "../htmlyjs/EjercicioInventario.html";
         } else {
             intentosRestantes--;
             if (intentosRestantes === 0) {
@@ -102,7 +99,7 @@ function iniciarSesion() {
         }
     })
     .catch(error => {
-        console.error("Error en la solicitud:", error);
+        console.error(error);
         boton.disabled = false;
         alert("Error en el servidor. Intente nuevamente.");
     });
@@ -529,32 +526,4 @@ function cargarProveedores() {
           });
       })
       .catch(error => console.error("Error cargando proveedores:", error));
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-  fetch("../php/login.php")
-      .then(response => response.json())
-      .then(data => {
-          if (data.rol) {
-              console.log("El usuario tiene el rol:", data.rol);
-              ocultarOpcionesSegunRol(data.rol); // Llamamos a una función para ocultar elementos
-          } else {
-              console.log("No hay usuario en sesión");
-          }
-      })
-      .catch(error => console.error("Error obteniendo el rol:", error));
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  fetch("login.php") // Llama a login.php para obtener el rol
-      .then(response => response.json())
-      .then(data => {
-          console.log("Rol actual:", data.rol); // Verifica en consola
-          if (data.rol === "Comprador") {
-              document.querySelectorAll(".crear-opcion").forEach(btn => btn.style.display = "none");
-          }
-      })
-      .catch(error => console.error("Error al obtener el rol:", error));
-});
-
-
+} 
