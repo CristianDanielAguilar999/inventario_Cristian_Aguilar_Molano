@@ -215,32 +215,34 @@ function crearCategoria() {
 
 function enviarCategoria() {
   const nombreCategoria = document.getElementById('nombreCategoria').value;
-  const descripción = document.getElementById('descripciónCategoria').value;
+  const descripcionCategoria = document.getElementById('descripciónCategoria').value;
   const codigoCategoria = document.getElementById('codigoCategoria').value;
-  const estado = document.getElementById('estadoCategoria').value;
+  const estadoCategoria = document.getElementById('estadoCategoria').value;
 
-  const datos = {
+  // Crear objeto de categoría
+  const nuevaCategoria = {
     nombreCategoria: nombreCategoria,
-    descripciónCategoria : descripción,
+    descripcionCategoria: descripcionCategoria,
     codigoCategoria: codigoCategoria,
-    estadoCategoria: estado
+    estadoCategoria: estadoCategoria
   };
 
-  fetch('../php/guardarCategoria.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(datos)
-  })
-  .then(response => response.text())
-  .then(data => {
-    console.log(data);
-    document.getElementById('overlay').style.display = 'none';
-    document.getElementById('categoria').style.display = 'none';
-  })
-  .catch(error => console.error(error));
+  // Obtener categorías guardadas en LocalStorage o inicializar un array vacío
+  let categorias = JSON.parse(localStorage.getItem('categorias')) || [];
+
+  // Agregar la nueva categoría
+  categorias.push(nuevaCategoria);
+
+  // Guardar en LocalStorage
+  localStorage.setItem('categorias', JSON.stringify(categorias));
+
+  // Cerrar el modal
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('categoria').style.display = 'none';
+
+  alert("Categoría guardada en LocalStorage correctamente!");
 }
+
 
 function cerrarCategoria() {
   document.getElementById('overlay').style.display = 'none';
@@ -438,25 +440,28 @@ function cargarCategorias() {
       .catch(error => console.error("Error al cargar las categorías:", error));
 }
 
-function mostrarCategorias(categorias) {
+function mostrarCategorias() {
   const contenedor = document.getElementById("contenedor-categorias");
-  contenedor.innerHTML = ""; // Limpiar antes de agregar nuevas tarjetas
+  contenedor.innerHTML = ""; // Limpiar contenido antes de agregar nuevas tarjetas
 
-  if (categorias.error) {
-      contenedor.innerHTML = `<p>Error: ${categorias.error}</p>`;
+  // Obtener categorías desde LocalStorage
+  let categorias = JSON.parse(localStorage.getItem('categorias')) || [];
+
+  if (categorias.length === 0) {
+      contenedor.innerHTML = `<p>No hay categorías registradas.</p>`;
       return;
   }
 
+  // Crear tarjetas para cada categoría
   categorias.forEach(categoria => {
       const card = document.createElement("div");
       card.classList.add("card");
 
       card.innerHTML = `
           <h3>${categoria.nombreCategoria} (Código: ${categoria.codigoCategoria})</h3>
-          <p>${categoria.descripción}</p>
-          <span class="estado">${categoria.estado}</span>
-          <button>Ver más</button>
-
+          <p>${categoria.descripcionCategoria}</p>
+          <span class="estado">${categoria.estadoCategoria}</span>
+          <button onclick="eliminarCategoria('${categoria.codigoCategoria}')">Eliminar</button>
       `;
 
       contenedor.appendChild(card);
@@ -527,3 +532,16 @@ function cargarProveedores() {
       })
       .catch(error => console.error("Error cargando proveedores:", error));
 } 
+
+function eliminarCategoria(codigo) {
+  let categorias = JSON.parse(localStorage.getItem('categorias')) || [];
+
+  // Filtrar para eliminar la categoría con el código proporcionado
+  categorias = categorias.filter(categoria => categoria.codigoCategoria !== codigo);
+
+  // Guardar cambios en LocalStorage
+  localStorage.setItem('categorias', JSON.stringify(categorias));
+
+  // Volver a mostrar las categorías actualizadas
+  mostrarCategorias();
+}
