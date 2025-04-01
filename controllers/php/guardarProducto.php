@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $proveedorProducto = $_POST['proveedorProducto'];
     $categoriaProducto = $_POST['categoriaProducto'];
 
-    $target_dir = "../../public/Images/"; // Asegúrate de que esta carpeta exista
+    $target_dir = "../public/Images/"; // Asegúrate de que esta carpeta exista
     $target_file = $target_dir . basename($_FILES["imagenProducto"]["name"]);
     $imagenFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
     $uploadOk = 1;
@@ -28,8 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Subir imagen
     if (move_uploaded_file($_FILES["imagenProducto"]["tmp_name"], $target_file)) {
         // Guardar en la base de datos
-        $sql = "INSERT INTO producto (nombreProducto, valorProducto, descripción, cantidad, imagen, Id_Proveedor, Id_Categoria) 
-                VALUES (:nombreProducto, :valorProducto, :descripcionProducto, :cantidadProducto, :imagen, :proveedorProducto, :categoriaProducto)";
+        $sql = "INSERT INTO producto (nombreProducto, valorProducto, descripcion, cantidad, imagen, Id_Proveedor, Id_Categoria) 
+        VALUES (:nombreProducto, :valorProducto, :descripcionProducto, :cantidadProducto, :imagen, :proveedorProducto, :categoriaProducto)";
+
 
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':nombreProducto', $nombreProducto);

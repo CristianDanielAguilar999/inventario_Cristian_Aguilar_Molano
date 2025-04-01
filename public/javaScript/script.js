@@ -209,34 +209,36 @@ function crearCategoria() {
 
 function enviarCategoria() {
   const nombreCategoria = document.getElementById('nombreCategoria').value;
-  const descripcionCategoria = document.getElementById('descripciónCategoria').value;
+  const descripcionCategoria = document.getElementById('descripciónCategoria').value; // Con tilde
   const codigoCategoria = document.getElementById('codigoCategoria').value;
   const estadoCategoria = document.getElementById('estadoCategoria').value;
 
-  // Crear objeto de categoría
+  if (!nombreCategoria || !descripcionCategoria || !codigoCategoria || !estadoCategoria) {
+      alert("Todos los campos son obligatorios.");
+      return;
+  }
+
   const nuevaCategoria = {
-    nombreCategoria: nombreCategoria,
-    descripcionCategoria: descripcionCategoria,
-    codigoCategoria: codigoCategoria,
-    estadoCategoria: estadoCategoria
+      nombreCategoria,
+      descripciónCategoria: descripcionCategoria, // Con tilde
+      codigoCategoria,
+      estadoCategoria
   };
 
-  // Obtener categorías guardadas en LocalStorage o inicializar un array vacío
-  let categorias = JSON.parse(localStorage.getItem('categorias')) || [];
-
-  // Agregar la nueva categoría
-  categorias.push(nuevaCategoria);
-
-  // Guardar en LocalStorage
-  localStorage.setItem('categorias', JSON.stringify(categorias));
-
-  // Cerrar el modal
-  document.getElementById('overlay').style.display = 'none';
-  document.getElementById('categoria').style.display = 'none';
-
-  alert("Categoría guardada en LocalStorage correctamente!");
-}  
-
+  fetch('../../controllers/php/guardarCategoria.php', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(nuevaCategoria)
+  })
+  .then(response => response.text())
+  .then(data => {
+      alert(data);
+      cerrarCategoria();
+  })
+  .catch(error => console.error('Error:', error));
+}
 
 function cerrarCategoria() {
   document.getElementById('overlay').style.display = 'none';
@@ -298,16 +300,31 @@ fetch('../../controllers/php/cargarProveedores.php')
 });
 
 fetch('../../controllers/php/cargarCategorias.php')
-.then(response => response.json())
-.then(data => {
-  const selectCategorias = document.getElementById('categoriaProducto');
-  data.forEach(categoria => {
-    const option = document.createElement('option');
-    option.value = categoria.IdCategoria;
-    option.text = categoria.nombreCategoria;
-    selectCategorias.appendChild(option);
+  .then(response => {
+    // Verificar si la respuesta es exitosa
+    if (!response.ok) {
+      throw new Error('Error al cargar las categorías');
+    }
+    return response.json();
+  })
+  .then(data => {
+    const selectCategorias = document.getElementById('categoriaProducto');
+    
+    // Comprobar si data es un array y tiene elementos
+    if (Array.isArray(data) && data.length > 0) {
+      data.forEach(categoria => {
+        const option = document.createElement('option');
+        option.value = categoria.IdCategoria;
+        option.text = categoria.nombreCategoria;
+        selectCategorias.appendChild(option);
+      });
+    } else {
+      console.log("No se encontraron categorías.");
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
   });
-});
 
 
 function cerrarCategoria() {
@@ -317,153 +334,159 @@ function cerrarCategoria() {
 
 
 // Cargar productos al iniciar
-cargarProductos();
+document.addEventListener("DOMContentLoaded", cargarProductos);
 
 function cargarProductos() {
-  fetch('../../controllers/php/producto.php', {
-    method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "cargarProductos" })
-  })
-  .then(response => response.json())
-  .then(data => {
-    let tbody = document.getElementById('listarProductos');
-    tbody.innerHTML = ''; // Limpiar la tabla antes de agregar los productos
-
-    data.forEach(producto => {
-      let tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${producto.IdProducto}</td>
-        <td><img src="${producto.imagen}" width="50" height="50"></td>
-        <td>${producto.nombreProducto}</td>
-        <td>${producto.descripción}</td>
-        <td>${producto.valorProducto}</td>
-        <td>${producto.cantidad}</td>
-        <td>${producto.proveedor}</td>
-        <td>${producto.categoria}</td>
-        <td>
-          <button class="btn btn-warning" onclick="abrirModalEditar(${producto.IdProducto})">Editar</button>
-          <button class="btn btn-danger" onclick="eliminarProducto(${producto.IdProducto})">Eliminar</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  })
-  .catch(error => console.error("Error cargando productos:", error));
-}
-
-// ✅ Función para abrir el modal de edición y cargar los datos del producto
-function abrirModalEditar(id) {
-  fetch('../../controllers/php/producto.php', {
-    method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "obtenerProducto", IdProducto: id })
-  })
-  .then(response => response.json())
-  .then(producto => {
-    document.getElementById('editarNombre').value = producto.nombreProducto;
-    document.getElementById('editarValor').value = producto.valorProducto;
-    document.getElementById('editarDescripcion').value = producto.descripción;
-    document.getElementById('editarCantidad').value = producto.cantidad;
-    document.getElementById('modalEditar').dataset.id = id; // Guardar el ID en el modal
-    document.getElementById('modalEditar').style.display = 'block';
-  })
-  .catch(error => console.error("Error obteniendo producto:", error));
-}
-
-// ✅ Función para cerrar el modal de edición
-function cerrarEdicion() {
-  document.getElementById('modalEditar').style.display = 'none';
-}
-
-// ✅ Función para guardar los cambios del producto editado
-function enviarCambios() {
-  let idProducto = document.getElementById('modalEditar').dataset.id;
-  let datos = {
-    action: "editarProducto",
-    IdProducto: idProducto,
-    nombreProducto: document.getElementById('editarNombre').value,
-    valorProducto: document.getElementById('editarValor').value,
-    descripción: document.getElementById('editarDescripcion').value,
-    cantidad: document.getElementById('editarCantidad').value
-  };
-
-  fetch('../../controllers/php/producto.php', {
-    method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(datos)
-  })
-  .then(response => response.json())
-  .then(data => {
-    alert(data.message);
-    if (data.success) {
-      cerrarEdicion();
-      cargarProductos(); // Recargar la tabla con los datos actualizados
-    }
-  })
-  .catch(error => console.error("Error guardando cambios:", error));
-}
-
-// ✅ Función para eliminar un producto
-function eliminarProducto(id) {
-  if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
     fetch('../../controllers/php/producto.php', {
-      method: 'POST',
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "eliminarProducto", IdProducto: id })
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "cargarProductos" })
     })
     .then(response => response.json())
     .then(data => {
-      alert(data.message);
-      if (data.success) {
-        cargarProductos(); // Recargar la tabla después de eliminar
-      }
+        let tbody = document.getElementById('listarProductos');
+        tbody.innerHTML = '';
+
+        data.forEach(producto => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${producto.IdProducto}</td>
+                <td><img src="../../controllers/php/imagen.php?id=${producto.IdProducto}" width="50" height="50"></td>
+                <td>${producto.nombreProducto}</td>
+                <td>${producto.descripcion}</td>
+                <td>${producto.valorProducto}</td>
+                <td>${producto.cantidad}</td>
+                <td>${producto.categoria}</td>
+                <td>${producto.proveedor}</td>
+                <td>
+                    <button class="btn btn-warning" onclick="abrirModalEditar(${producto.IdProducto})">Editar</button>
+                    <button class="btn btn-danger" onclick="eliminarProducto(${producto.IdProducto})">Eliminar</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
     })
-    .catch(error => console.error("Error eliminando producto:", error));
-  }
+    .catch(error => console.error("Error cargando productos:", error));
+}
+
+function abrirModalEditar(id) {
+    fetch('../../controllers/php/producto.php', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "obtenerProducto", IdProducto: id })
+    })
+    .then(response => response.json())
+    .then(producto => {
+        document.getElementById('editarNombre').value = producto.nombreProducto;
+        document.getElementById('editarValor').value = producto.valorProducto;
+        document.getElementById('editarDescripcion').value = producto.descripcion;
+        document.getElementById('editarCantidad').value = producto.cantidad;
+        document.getElementById('modalEditar').dataset.id = id;
+        document.getElementById('modalEditar').style.display = 'block';
+    })
+    .catch(error => console.error("Error obteniendo producto:", error));
+}
+
+function cerrarEdicion() {
+    document.getElementById('modalEditar').style.display = 'none';
+}
+
+function enviarCambios() {
+    let idProducto = document.getElementById('modalEditar').dataset.id;
+    let datos = {
+        action: "editarProducto",
+        IdProducto: idProducto,
+        nombreProducto: document.getElementById('editarNombre').value,
+        valorProducto: document.getElementById('editarValor').value,
+        descripcion: document.getElementById('editarDescripcion').value,
+        cantidad: document.getElementById('editarCantidad').value
+    };
+
+    fetch('../../controllers/php/producto.php', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        if (data.success) {
+            cerrarEdicion();
+            cargarProductos();
+        }
+    })
+    .catch(error => console.error("Error guardando cambios:", error));
+}
+
+function eliminarProducto(id) {
+    if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
+        fetch('../../controllers/php/producto.php', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "eliminarProducto", IdProducto: id })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                cargarProductos();
+            }
+        })
+        .catch(error => console.error("Error eliminando producto:", error));
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  cargarCategorias();
+  cargarCategorias(); // Cargar las categorías cuando la página se haya cargado
 });
 
 function cargarCategorias() {
-  fetch("../../controllers/php/categorias.php")
-      .then(response => response.json())
-      .then(data => mostrarCategorias(data))
-      .catch(error => console.error("Error al cargar las categorías:", error));
+  fetch("../../controllers/php/cargarCategorias.php")  // URL donde se obtiene las categorías
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Error al cargar las categorías");
+      }
+      return response.json();
+    })
+    .then(data => mostrarCategorias(data))  // Llamamos a la función para mostrar las categorías
+    .catch(error => console.error("Error al cargar las categorías:", error));
 }
 
-function mostrarCategorias() {
+function mostrarCategorias(categorias) {
   const contenedor = document.getElementById("contenedor-categorias");
   contenedor.innerHTML = ""; // Limpiar contenido antes de agregar nuevas tarjetas
 
-  // Obtener categorías desde LocalStorage
-  let categorias = JSON.parse(localStorage.getItem('categorias')) || [];
-
+  // Verificar si el array de categorías está vacío
   if (categorias.length === 0) {
-      contenedor.innerHTML = `<p>No hay categorías registradas.</p>`;
-      return;
+    contenedor.innerHTML = `<p>No hay categorías registradas.</p>`;
+    return;
   }
 
-  // Crear tarjetas para cada categoría
+  // Crear una tarjeta para cada categoría
   categorias.forEach(categoria => {
-      const card = document.createElement("div");
-      card.classList.add("card");
+    const card = document.createElement("div");
+    card.classList.add("card");
 
-      card.innerHTML = `
-          <h3>${categoria.nombreCategoria} (Código: ${categoria.codigoCategoria})</h3>
-          <p>${categoria.descripcionCategoria}</p>
-          <span class="estado">${categoria.estadoCategoria}</span>
-          <button onclick="eliminarCategoria('${categoria.codigoCategoria}')">Eliminar</button>
-      `;
+    // Construir el HTML de cada tarjeta con los datos de la categoría
+    card.innerHTML = `
+        <h3>${categoria.nombreCategoria}</h3>
+        <p><strong>Código:</strong> ${categoria.codigoCategoria}</p>
+        <p><strong>Descripción:</strong> ${categoria.descripcion}</p>
+        <p><strong>Estado:</strong> ${categoria.estado}</p>
+        <button onclick="eliminarCategoria()">Eliminar</button>  <!-- Botón de eliminar sin acción -->
+    `;
 
-      contenedor.appendChild(card);
+    // Agregar la tarjeta al contenedor
+    contenedor.appendChild(card);
   });
-}  
+}
 
-// Recargar automáticamente cuando se agregue una nueva categoría
-setInterval(cargarCategorias, 5000); // Se recarga cada 5 segundos
+// Función eliminarCategoria (actualmente vacía)
+function eliminarCategoria() {
+  console.log("Eliminar categoría (sin acción definida)");
+}
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
   cargarProveedores();
@@ -527,15 +550,3 @@ function cargarProveedores() {
       .catch(error => console.error("Error cargando proveedores:", error));
 } 
 
-function eliminarCategoria(codigo) {
-  let categorias = JSON.parse(localStorage.getItem('categorias')) || [];
-
-  // Filtrar para eliminar la categoría con el código proporcionado
-  categorias = categorias.filter(categoria => categoria.codigoCategoria !== codigo);
-
-  // Guardar cambios en LocalStorage
-  localStorage.setItem('categorias', JSON.stringify(categorias));
-
-  // Volver a mostrar las categorías actualizadas
-  mostrarCategorias();
-}
