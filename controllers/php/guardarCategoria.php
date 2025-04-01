@@ -1,5 +1,5 @@
 <?php
-require_once 'conexion.php';
+require_once '../../config/conexion.php';
 
 $datos = json_decode(file_get_contents('php://input'), true);
 

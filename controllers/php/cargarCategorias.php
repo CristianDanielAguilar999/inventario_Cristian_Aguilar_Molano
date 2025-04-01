@@ -1,5 +1,5 @@
 <?php
-require_once 'conexion.php';
+require_once '../../config/conexion.php';
 
 $sql = "SELECT * FROM categoria";
 $result = $pdo->query($sql);

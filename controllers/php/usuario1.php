@@ -1,6 +1,6 @@
 <?php
 
-require_once 'conexion.php';
+require_once '../../config/conexion.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $stmt->bindParam(':rol', $rol);
       $stmt->execute();
     echo json_encode(['mensaje' => 'Registro exitoso']);
-    header('Location: ../htmlyjs/Index.html');exit;
+    header('Location: ../../views/html/Index.html');exit;
     } catch (PDOException $e) {
       echo json_encode(['mensaje' => 'Error al registrar: ' . $e->getMessage()]);
     }

@@ -1,5 +1,5 @@
 <?php
-require_once 'conexion.php';
+require_once '../../config/conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombreProducto = $_POST['nombreProducto'];
@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $proveedorProducto = $_POST['proveedorProducto'];
     $categoriaProducto = $_POST['categoriaProducto'];
 
-    $target_dir = "../Images/"; // Asegúrate de que esta carpeta exista
+    $target_dir = "../../public/Images/"; // Asegúrate de que esta carpeta exista
     $target_file = $target_dir . basename($_FILES["imagenProducto"]["name"]);
     $imagenFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
     $uploadOk = 1;

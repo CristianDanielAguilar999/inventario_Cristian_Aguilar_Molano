@@ -1,10 +1,10 @@
 <?php
-require_once 'conexion.php';
+require_once '../../config/conexion.php';
 
 session_start();
 
 if (!isset($_SESSION['nombre'])) {
-  header('Location: login.php');
+  header('Location: ../../views/php/login.php');
   exit;
 }
 

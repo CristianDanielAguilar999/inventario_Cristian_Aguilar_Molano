@@ -1,9 +1,3 @@
-fetch('barra.html')
-  .then(response => response.text())
-  .then(html => {
-    document.getElementById('nav-container').innerHTML = html;
-  });
-
 function IniciarLogin() {
     document.getElementById("RegisterFormContainer").style.display = "block";
 }
@@ -26,7 +20,7 @@ function RegistrarUsuario() {
     }
 
     // Enviar datos a PHP
-    fetch("../php/usuario1.php", {
+    fetch("../../controllers/php/usuario1.php", {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
@@ -71,7 +65,7 @@ function iniciarSesion() {
 
     boton.disabled = true; // Evita múltiples clics
 
-    fetch("../php/login.php", {
+    fetch("../../controllers/php/login.php", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -87,7 +81,7 @@ function iniciarSesion() {
         boton.disabled = false; // Habilita el botón nuevamente
         if (data.estado === "exito") {
             // Redirige a la misma página para todos los roles
-            window.location.href = "../htmlyjs/EjercicioInventario.php";
+            window.location.href = "../../views/html/EjercicioInventario.php";
         } else {
             intentosRestantes--;
             if (intentosRestantes === 0) {
@@ -111,7 +105,7 @@ function mostrarPerfil() {
   document.getElementById('overlay').style.display = 'block';
   document.getElementById('perfil').style.display = 'block';
 
-  fetch('../php/mostrar.php')
+  fetch('../../controllers/php/mostrar.php')
     .then(response => response.json())
     .then(data => {
       document.getElementById('nombre').value = data.nombre;
@@ -150,7 +144,7 @@ function actualizarDatos() {
   formData.append('dirección', dirección);
   formData.append('email', email);
 
-  fetch('../php/guardar.php', {
+  fetch('../../controllers/php/guardar.php', {
       method: 'POST',
       body: formData
   })
@@ -187,7 +181,7 @@ function enviarProveedor(){
     email: email
   };
 
-  fetch('../php/guardarProveedor.php', {
+  fetch('../../controllers/php/guardarProveedor.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -265,7 +259,7 @@ function enviarProducto() {
   formData.append('proveedorProducto', document.getElementById('proveedorProducto').value);
   formData.append('categoriaProducto', document.getElementById('categoriaProducto').value);
 
-  fetch('../php/guardarProducto.php', {
+  fetch('../../controllers/php/guardarProducto.php', {
       method: 'POST',
       body: formData // Enviar FormData sin 'Content-Type'
   })
@@ -291,7 +285,7 @@ function enviarProducto() {
 
 
 // Cargar proveedores y categorías en los select
-fetch('../php/cargarProveedores.php')
+fetch('../../controllers/php/cargarProveedores.php')
 .then(response => response.json())
 .then(data => {
   const selectProveedores = document.getElementById('proveedorProducto');
@@ -303,7 +297,7 @@ fetch('../php/cargarProveedores.php')
   });
 });
 
-fetch('../php/cargarCategorias.php')
+fetch('../../controllers/php/cargarCategorias.php')
 .then(response => response.json())
 .then(data => {
   const selectCategorias = document.getElementById('categoriaProducto');
@@ -326,7 +320,7 @@ function cerrarCategoria() {
 cargarProductos();
 
 function cargarProductos() {
-  fetch('../php/producto.php', {
+  fetch('../../controllers/php/producto.php', {
     method: 'POST',
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action: "cargarProductos" })
@@ -360,7 +354,7 @@ function cargarProductos() {
 
 // ✅ Función para abrir el modal de edición y cargar los datos del producto
 function abrirModalEditar(id) {
-  fetch('../php/producto.php', {
+  fetch('../../controllers/php/producto.php', {
     method: 'POST',
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action: "obtenerProducto", IdProducto: id })
@@ -394,7 +388,7 @@ function enviarCambios() {
     cantidad: document.getElementById('editarCantidad').value
   };
 
-  fetch('../php/producto.php', {
+  fetch('../../controllers/php/producto.php', {
     method: 'POST',
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos)
@@ -413,7 +407,7 @@ function enviarCambios() {
 // ✅ Función para eliminar un producto
 function eliminarProducto(id) {
   if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
-    fetch('../php/producto.php', {
+    fetch('../../controllers/php/producto.php', {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "eliminarProducto", IdProducto: id })
@@ -434,7 +428,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function cargarCategorias() {
-  fetch("../php/categorias.php")
+  fetch("../../controllers/php/categorias.php")
       .then(response => response.json())
       .then(data => mostrarCategorias(data))
       .catch(error => console.error("Error al cargar las categorías:", error));
@@ -485,7 +479,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const formData = new FormData(form);
           
-          fetch("../php/proveedores.php", {
+          fetch("../../controllers/php/proveedores.php", {
               method: "POST",
               body: formData
           })
@@ -509,7 +503,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // ✅ Función para cargar proveedores y actualizar la lista
 function cargarProveedores() {
-  fetch("../php/proveedores.php")
+  fetch("../../controllers/php/proveedores.php")
       .then(response => response.json())
       .then(data => {
           const container = document.getElementById("proveedores-container");

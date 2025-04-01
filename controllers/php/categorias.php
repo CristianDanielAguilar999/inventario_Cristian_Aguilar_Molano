@@ -1,5 +1,5 @@
 <?php
-require_once 'conexion.php'; // Asegúrate de que este archivo tenga la conexión a la BD
+require_once '../../config/conexion.php'; // Asegúrate de que este archivo tenga la conexión a la BD
 
 header("Content-Type: application/json");
 

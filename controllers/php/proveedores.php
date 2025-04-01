@@ -1,5 +1,5 @@
 <?php
-include 'conexion.php'; // Asegúrate de que existe este archivo
+include '../../config/conexion.php'; // Asegúrate de que existe este archivo
 
 // Obtener proveedores
 $sql = "SELECT IdProveedor, nombre, dirección AS direccion, telefono, email FROM proveedor";
