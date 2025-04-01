@@ -241,7 +241,7 @@ function enviarCategoria() {
   document.getElementById('categoria').style.display = 'none';
 
   alert("Categoría guardada en LocalStorage correctamente!");
-}
+}  
 
 
 function cerrarCategoria() {
@@ -466,7 +466,7 @@ function mostrarCategorias() {
 
       contenedor.appendChild(card);
   });
-}
+}  
 
 // Recargar automáticamente cuando se agregue una nueva categoría
 setInterval(cargarCategorias, 5000); // Se recarga cada 5 segundos
