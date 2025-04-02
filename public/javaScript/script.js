@@ -351,7 +351,7 @@ function cargarProductos() {
             let tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${producto.IdProducto}</td>
-                <td><img src="../../controllers/php/imagen.php?id=${producto.IdProducto}" width="50" height="50"></td>
+                <td><img src="${producto.imagen}" width="50" height="50"></td>
                 <td>${producto.nombreProducto}</td>
                 <td>${producto.descripcion}</td>
                 <td>${producto.valorProducto}</td>
