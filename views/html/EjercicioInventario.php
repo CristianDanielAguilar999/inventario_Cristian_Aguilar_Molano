@@ -62,7 +62,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <br>
         <div class="row">
             <div class="col-md-5 text-center">
-                <img id="Gif" src="../Imagenes/MISIÓN.gif" class="d-block w-100 img-fluid" alt="Misión">
+                <img id="Gif" src="../../public/Imagenes/MISIÓN.gif" class="d-block w-100 img-fluid" alt="Misión">
             </div>
             <div class="col-md-7">
                 <p class="fs-4 text-lg bg-primary text-white text-center">La misión de...</p>
@@ -74,7 +74,7 @@ if (session_status() === PHP_SESSION_NONE) {
                 <p class="fs-4 text-lg bg-primary text-white text-center">La visión de...</p>
             </div>
             <div class="col-md-5 text-center">
-                <img id="Gif" src="../Imagenes/VISIÓN.gif" class="d-block w-100 img-fluid" alt="Visión">
+                <img id="Gif" src="../../public/Imagenes/VISIÓN.gif" class="d-block w-100 img-fluid" alt="Visión">
             </div>
         </div>
 
